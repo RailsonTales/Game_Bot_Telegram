@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html>
+<body>
+<title>Esquilo Voador
+</title>
+<canvas id="myCanvas" width="950" height="330" style="border: 1px solid #000000;">
+</canvas>
+<script>
+var canvas = document.getElementById("myCanvas");
+var ctx    = canvas.getContext("2d");
+
+var pontos = 0;
+var posicaoGameOver = 1100;
+var controle = 0;
+
+var mascara = new Image();
+mascara.src = 'noz.png';
+
+var gameover = new Image();
+gameover.src = 'goc.png';
+
+var img = new Image();
+img.src = 'cenario3.jpg';
+
+var uranio = [new Image(),new Image(),new Image()];
+
+uranio[0].src = 'galho.png';
+uranio[1].src = 'galho.png';
+uranio[2].src = 'galho.png';
+
+var start = (new Date()).getTime();
+var current;	
+var currentFrame = 0;
+
+var images = new Array();
+var numFrames = 2;
+
+var player_x = 70;
+var player_y = 310;
+var player_w = 130;
+var player_h = 70;
+
+var player_speed = 5;
+
+var player_moveLeft = false;
+var player_moveRight = false;
+var player_moveUp = false;
+var player_moveDown = false;
+//var player_jump = false;
+
+var uranio_x = [1100,1300,1500];
+uranio_x[0] = 1100;
+uranio_x[1] = 1300;
+uranio_x[2] = 1500;
+
+var aleatorio = Math.floor(Math.random() * 260 + 1);
+var aleatorio1 = Math.floor(Math.random() * 260 + 1);
+var aleatorio2 = Math.floor(Math.random() * 260 + 1);
+var uranio_y = [aleatorio,aleatorio1,aleatorio2];
+uranio_y[0] = aleatorio;
+uranio_y[1] = aleatorio1;
+uranio_y[2] = aleatorio2;
+var uranio_w = 50;
+var uranio_h = 60;
+	
+var aleatorioM = Math.floor(Math.random() * 260 + 1);
+var mascara_x = 1700;
+var mascara_y = aleatorioM;
+var mascara_w = 50;
+var mascara_h = 60;
+
+var posX = 0;
+
+for (var i = 0; i < numFrames; i++)
+{
+	images[i] = new Image();
+	images[i].src = "e" + (i+1) + ".png";
+}
+
+var _keyDown = function(e)
+{		
+	switch (e.keyCode)
+	{
+		case 13: 
+			location.reload();
+			break;
+			
+		case 37: 
+			player_moveLeft = true;
+			break;	
+
+		case 39: 
+			player_moveRight = true;
+			break;
+
+		case 38: 
+			player_moveUp = true;
+			break;	
+
+		case 40: 
+			player_moveDown = true;
+			break;
+				
+		case 32: 
+			player_jump = true;
+			break;
+					
+		default:
+			console.log("keyDown: " + e.keyCode);
+			break;
+	}
+}
+
+var _keyUp = function(e)
+{			
+	switch (e.keyCode)
+	{
+		case 37:
+			player_moveLeft = false;
+			break;	
+
+		case 39:
+			player_moveRight = false;
+			break;
+
+		case 38: 
+			player_moveUp = false;
+			break;	
+
+		case 40: 
+			player_moveDown = false;
+			break;
+		
+		default:
+			console.log("keyUp: " + e.keyCode);
+			break;	
+	}				
+}
+
+document.addEventListener("keydown", _keyDown, true);
+document.addEventListener("keyup", _keyUp, true);
+
+function updatePlayer()
+{
+	if (player_moveLeft)
+	{
+		//player_x -= player_speed;
+	}
+	
+	if (player_moveRight)
+	{
+		//player_x += player_speed;
+	}	
+	if(player_moveUp)
+	{
+		player_y -= player_speed;
+	}
+	if(player_moveDown)
+	{
+		player_y += player_speed;
+	}
+}
+
+function cima()
+{
+	player_y -= player_speed+70;
+}
+
+function baixo()
+{
+	player_y += player_speed+70;
+}
+
+function atualizar()
+{
+	location.reload();
+}
+
+function deltaTime()
+{
+	current = (new Date()).getTime();
+	elapsed = current - start;
+	start = current;
+	var delta = elapsed / 1000;			
+	return delta;
+}	
+
+function update()
+{
+	if(player_x<0)
+	player_x=0;
+	
+	if(player_y<0)
+	player_y=0;
+	
+	if(player_x>870)
+	player_x=870;
+	
+	if(player_y>260)
+	player_y=260;
+	
+	aleatorio = Math.floor(Math.random() * 260 + 1);
+	aleatorio1 = Math.floor(Math.random() * 260 + 1);
+	aleatorio2 = Math.floor(Math.random() * 260 + 1);
+	aleatorioM = Math.floor(Math.random() * 260 + 1);
+	//console.log(aleatorio);
+	var delta = deltaTime();	
+	currentFrame += delta * 10;
+	
+	posX -= delta * 300;
+	if(posX<-3000)
+	{
+		posX = 0;
+	}
+	
+	mascara_x -= delta * 600;
+	if(mascara_x < -100)
+	{
+		mascara_x = 1700;
+		mascara_y = aleatorioM;
+	}
+	
+	uranio_x[0] -= delta * 600;
+	uranio_x[1] -= delta * 600;
+	uranio_x[2] -= delta * 600;
+	if(uranio_x[0] < -100)
+	{
+		uranio_x[0] = 1100;
+		uranio_y[0] = aleatorio;
+	}
+	if(uranio_x[1] < -100)
+	{
+		uranio_x[1] = 1300;
+		uranio_y[1] = aleatorio;
+	}
+	if(uranio_x[2] < -100)
+	{
+		uranio_x[2] = 1500;
+		uranio_y[2] = aleatorio;
+	}
+	
+	if(((player_x+player_w < uranio_x[0]) || (player_x > uranio_x[0]+uranio_w)) ||  
+	((player_y+player_h < uranio_y[0]) || (player_y > uranio_y[0]+uranio_h)))
+	{
+		
+	}
+	else
+	{
+		uranio_x[0] = 1100;
+		uranio_y[0] = aleatorio;
+		posicaoGameOver = 0;
+		controle = 1;
+	}
+	if(((player_x+player_w < uranio_x[1]) || (player_x > uranio_x[1]+uranio_w)) ||  
+	((player_y+player_h < uranio_y[1]) || (player_y > uranio_y[1]+uranio_h)))
+	{
+		
+	}
+	else
+	{
+		uranio_x[1] = 1300;
+		uranio_y[1] = aleatorio1;
+		posicaoGameOver = 0;
+		controle = 1;
+	}
+	if(((player_x+player_w < uranio_x[2]) || (player_x > uranio_x[2]+uranio_w)) ||  
+	((player_y+player_h < uranio_y[2]) || (player_y > uranio_y[2]+uranio_h)))
+	{
+		
+	}
+	else
+	{
+		uranio_x[2] = 1500;
+		uranio_y[2] = aleatorio2;
+		posicaoGameOver = 0;
+		controle = 1;
+	}
+	
+	if(((player_x+player_w < mascara_x) || (player_x > mascara_x+mascara_w)) ||  
+	((player_y+player_h < mascara_y) || (player_y > mascara_y+mascara_h)))
+	{
+		
+	}
+	else
+	{
+		mascara_x = 1700;
+		mascara_y = aleatorioM;
+		if(controle == 0)
+		pontos +=10;
+	}
+}
+
+function draw()
+{
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	
+	ctx.drawImage(img, posX, 0, 4000 , 500);
+	
+	ctx.drawImage(uranio[0], uranio_x[0], uranio_y[0], uranio_w, uranio_h);
+	ctx.drawImage(uranio[1], uranio_x[1], uranio_y[1], uranio_w, uranio_h);
+	ctx.drawImage(uranio[2], uranio_x[2], uranio_y[2], uranio_w, uranio_h);
+	
+	ctx.drawImage(mascara, mascara_x,mascara_y,mascara_w,mascara_h);
+	
+	ctx.drawImage(images[Math.floor(currentFrame)%numFrames], player_x, player_y, player_w, player_h);	
+
+	ctx.drawImage(gameover, posicaoGameOver, 0, 1000 , 500);
+	
+	ctx.font = "30px Arial";
+	ctx.fillText("Pontos: "+pontos,10,30);
+	
+	ctx.fillText("By Railson Tales",720,320);
+	
+	if(controle == 1)
+	ctx.fillText("Pressione ENTER",750,490);
+}
+
+function loop()
+{	
+	update();
+	draw();		
+	setTimeout(loop, 10);
+	updatePlayer();
+}
+	
+loop();	
+</script>
+&emsp; &emsp; &emsp;
+<button onclick="cima();">
+<img src="cima.jpg" width="100" height="100">
+</button>
+&emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; 
+<button onclick="atualizar();">
+<img src="atualizar.jpg" width="100" height="100">
+</button>
+&emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; 
+<button onclick="baixo();">
+<img src="baixo.jpg" width="100" height="100">
+</button>
+</body>
+</html>
