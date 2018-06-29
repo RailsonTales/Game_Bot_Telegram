@@ -1,5 +1,5 @@
 var TelegramBot = require( "node-telegram-bot-api" );
-var bot = new TelegramBot( "556064998:AAG-mxfV97VDHjdmxhY0QgHyj-9jMEo2fCo", { polling: true } );
+var bot = new TelegramBot( "Seu_Token", { polling: true } );
 bot.onText( /\/start/, function( msg ) {
   bot.sendMessage(
       msg.from.id,
